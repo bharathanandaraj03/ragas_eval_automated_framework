@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     chunk_size: int = 800
     chunk_overlap: int = 100
     top_k: int = 4
+    judge_model: str= "gpt-4o-mini"
 
 @lru_cache
 def get_settings() -> Settings:
