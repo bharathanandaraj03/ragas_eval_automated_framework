@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local Qdrant index (rebuild with: python -m rag_app.ingest)
+.qdrant/
+
+# Eval outputs (regenerated each run; baselines in evals/baselines are committed)
+.eval_cache/
+evals/reports/
+evals/results/
