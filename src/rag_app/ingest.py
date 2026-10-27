@@ -7,6 +7,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from rag_app.settings import get_settings
 
+
 def ingest() -> int:
     s= get_settings()
     docs = DirectoryLoader(

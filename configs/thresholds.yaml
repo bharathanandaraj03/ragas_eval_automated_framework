@@ -1,0 +1,18 @@
+# Regression gate for eval runs (eval_framework.gate).
+# Starting values, not calibrated: tighten to ~0.05 below the first regression baseline.
+
+# Minimum mean score per metric across all rows that were scored for it.
+overall:
+  faithfulness: 0.80
+  answer_relevancy: 0.75
+  context_precision: 0.70
+  context_recall: 0.70
+  factual_correctness: 0.60
+
+# Minimum mean score per metric over rows carrying the tag.
+by_tag:
+  out-of-scope:
+    factual_correctness: 0.80
+
+# Maximum fraction of judge calls allowed to error out.
+max_error_rate: 0.05

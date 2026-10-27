@@ -5,10 +5,10 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-from openai import AsyncOpenAI, OpenAIEm
+from openai import AsyncOpenAI
 from ragas.embeddings.openai_provider import OpenAIEmbeddings
 from ragas.llms.base import llm_factory
-from ragas.metrics.collections import(
+from ragas.metrics.collections import (
     AnswerRelevancy,
     ContextPrecisionWithReference,
     ContextRecall,
@@ -20,8 +20,7 @@ from eval_framework.dataset import GoldenRow, load_golden
 from rag_app.query import RagPipeline, RagResponse
 from rag_app.settings import get_settings
 
-MAX_CONCURRENCY = 8 
-# parallel judge calls; lower it if you see rate-limit errors
+MAX_CONCURRENCY = 8  # parallel judge calls; lower it if you see rate-limit errors
 RESULTS_DIR = Path("evals/results")
 
 def build_metrics() -> dict:
@@ -31,7 +30,6 @@ def build_metrics() -> dict:
     embeddings = OpenAIEmbeddings(client=client,model=s.embedding_model)
 
     return{
-        "faithfulness": Faithfulness(llm=llm),
         "faithfulness": Faithfulness(llm=llm),
         "answer_relevancy": AnswerRelevancy(llm=llm, embeddings=embeddings),
         "context_precision": ContextPrecisionWithReference(llm=llm),
@@ -54,8 +52,10 @@ def metric_inputs(row: GoldenRow, rag: RagResponse) -> dict[str, dict]:
     }
 
 
-async def score_row(metrics: dict, row: GoldenRow, rag: RagResponse, sem: asyncio.Semaphore) -> dict:
-    record = {
+async def score_row(
+    metrics: dict, row: GoldenRow, rag: RagResponse, sem: asyncio.Semaphore
+) -> dict:
+    record: dict[str, object] = {
         "id": row.id,
         "tags": ",".join(row.tags),
         "user_input": row.user_input,
@@ -86,7 +86,9 @@ async def run(dataset_path: str) -> Path:
     metrics = build_metrics()
     sem = asyncio.Semaphore(MAX_CONCURRENCY)
     print("Scoring...")
-    records = await asyncio.gather(*(score_row(metrics, r, a, sem) for r, a in zip(rows, answers)))
+    records = await asyncio.gather(
+        *(score_row(metrics, r, a, sem) for r, a in zip(rows, answers, strict=True))
+    )
 
     df = pd.DataFrame(records)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)

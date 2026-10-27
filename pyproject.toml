@@ -9,6 +9,7 @@ requires-python = ">=3.12"
 
 dependencies = [
     "ragas",
+    "openai",
     "langchain",
     "langchain-community",
     "langchain-text-splitters",
@@ -29,7 +30,16 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# The paid regression run is opt-in: `pytest -m regression` overrides this.
+addopts = "-m 'not regression'"
 markers = [
     "smoke: fast subset, run on every PR",
-    "Regression: full dataset, nightly",
+    "regression: full dataset, paid, run manually",
 ]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]

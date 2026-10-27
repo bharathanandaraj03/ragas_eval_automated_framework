@@ -1,4 +1,4 @@
-"""Answaer a question from the indexed docs and retrun the contexts used."""
+"""Answer a question from the indexed docs and return the contexts used."""
 
 import sys
 from dataclasses import dataclass, field
@@ -12,7 +12,7 @@ from rag_app.settings import get_settings
 PROMPT = ChatPromptTemplate.from_messages([
     ("system",
      "Answer using ONLY the context below. If the answer is not in the context,"
-     +"say \"I don't know, \"\n\nContext:\n {context}"),
+     " say \"I don't know.\"\n\nContext:\n{context}"),
      ("human", "{question}"),
 ])
 
@@ -51,5 +51,5 @@ class RagPipeline:
 if __name__ == "__main__":
     result = RagPipeline().answer(" ".join(sys.argv[1:]))
     print(f"ANSWER:\n{result.answer}\n")
-    for i, (ctx,src) in enumerate(zip(result.contexts, result.sources),1):
+    for i, (ctx,src) in enumerate(zip(result.contexts, result.sources, strict=True),1):
         print(f"[{i}] {src}\n{ctx[:200]}...\n")
